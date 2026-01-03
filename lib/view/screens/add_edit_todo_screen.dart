@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_list_app/contorller/bloc/todo_bloc.dart';
+import 'package:todo_list_app/contorller/bloc/todo_event.dart';
 import 'package:todo_list_app/model/todo.dart';
 
 class AddEditTodoScreen extends StatefulWidget {
@@ -15,7 +18,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
   late TextEditingController descriptionController;
 
   String selectedPriority = 'Medium';
-  bool reminder = false;
+  bool reminderEnabled = false;
 
   @override
   void initState() {
@@ -27,8 +30,10 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
       text: widget.todo?.description ?? '',
     );
 
-    selectedPriority = widget.todo?.priority ?? 'Medium';
-    reminder = widget.todo?.isCompleted ?? false;
+    if (widget.todo != null) {
+      selectedPriority = _priorityToString(widget.todo!.priority);
+      reminderEnabled = widget.todo!.reminderTime != null;
+    }
   }
 
   @override
@@ -36,6 +41,28 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
     titleController.dispose();
     descriptionController.dispose();
     super.dispose();
+  }
+
+  int _priorityToInt(String value) {
+    switch (value) {
+      case 'High':
+        return 1;
+      case 'Low':
+        return 3;
+      default:
+        return 2;
+    }
+  }
+
+  String _priorityToString(int value) {
+    switch (value) {
+      case 1:
+        return 'High';
+      case 3:
+        return 'Low';
+      default:
+        return 'Medium';
+    }
   }
 
   @override
@@ -50,22 +77,18 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
           children: [
             TextField(
               controller: titleController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Title',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: descriptionController,
               maxLines: 3,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Description',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
@@ -82,26 +105,42 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               onChanged: (value) {
                 setState(() => selectedPriority = value!);
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Priority',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
             SwitchListTile(
               title: const Text('Set Reminder'),
-              value: reminder,
+              value: reminderEnabled,
               onChanged: (value) {
-                setState(() => reminder = value);
+                setState(() => reminderEnabled = value);
               },
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  final now = DateTime.now();
+
+                  final todo = Todo(
+                    id: isEdit ? widget.todo!.id : null,
+                    title: titleController.text.trim(),
+                    description: descriptionController.text.trim(),
+                    priority: _priorityToInt(selectedPriority),
+                    createdAt: isEdit ? widget.todo!.createdAt : DateTime.now(),
+                    reminderTime: reminderEnabled
+                        ? DateTime.now().add(const Duration(hours: 1))
+                        : null,
+                    isCompleted: widget.todo?.isCompleted ?? false,
+                  );
+
+                  context.read<TodoBloc>().add(AddTodoEvent(todo: todo));
+
+                  Navigator.pop(context);
+                },
                 child: Text(isEdit ? 'Update Task' : 'Add Task'),
               ),
             ),

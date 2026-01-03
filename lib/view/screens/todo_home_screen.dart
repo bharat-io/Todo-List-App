@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list_app/model/todo.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_list_app/contorller/bloc/todo_bloc.dart';
+import 'package:todo_list_app/contorller/bloc/todo_event.dart';
+import 'package:todo_list_app/contorller/bloc/todo_state.dart';
 import 'package:todo_list_app/view/screens/add_edit_todo_screen.dart';
 import 'package:todo_list_app/view/widgets/task_card.dart';
 
@@ -31,26 +34,62 @@ class TodoHomeScreen extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (_) => AddEditTodoScreen()),
           );
+          context.read<TodoBloc>().add(FetechTodoEvent());
         },
         child: const Icon(Icons.add),
       ),
       body: Column(
         children: [
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search tasks...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search tasks...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: demoTasks.length,
-              itemBuilder: (context, index) {
-                return TaskCard(todo: demoTasks[index]);
+            child: BlocBuilder<TodoBloc, TodoState>(
+              builder: (context, state) {
+                if (state is TodoLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is TodoLoaded) {
+                  if (state.todos.isEmpty) {
+                    return const Center(child: Text('No tasks found'));
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: state.todos.length,
+                    itemBuilder: (context, index) {
+                      final todo = state.todos[index];
+                      return TaskCard(
+                        onDelete: () {},
+                        onToggleComplete: (value) {},
+                        todo: todo,
+                        onEdit: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => AddEditTodoScreen(todo: todo),
+                            ),
+                          );
+
+                          context.read<TodoBloc>().add(FetechTodoEvent());
+                        },
+                      );
+                    },
+                  );
+                }
+                if (state is TodoFailed) {
+                  return Center(child: Text(state.message));
+                }
+                return const SizedBox();
               },
             ),
           ),
@@ -59,27 +98,3 @@ class TodoHomeScreen extends StatelessWidget {
     );
   }
 }
-
-final List<Todo> demoTasks = [
-  Todo(
-    title: 'Finish Flutter UI',
-    description: 'Design Todo app UI for assignment',
-    priority: 'High',
-    dueDate: '05 Jan 2026',
-    isCompleted: false,
-  ),
-  Todo(
-    title: 'Buy groceries',
-    description: 'Milk, vegetables, fruits',
-    priority: 'Medium',
-    dueDate: '06 Jan 2026',
-    isCompleted: true,
-  ),
-  Todo(
-    title: 'Workout',
-    description: 'Evening gym session',
-    priority: 'Low',
-    dueDate: '07 Jan 2026',
-    isCompleted: false,
-  ),
-];

@@ -1,20 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_list_app/model/todo.dart';
 import 'package:todo_list_app/view/screens/add_edit_todo_screen.dart';
 
 class TaskCard extends StatelessWidget {
   final Todo todo;
-  const TaskCard({super.key, required this.todo});
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+  final ValueChanged<bool?>? onToggleComplete;
+  const TaskCard({
+    super.key,
+    required this.todo,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onToggleComplete,
+  });
 
   Color getPriorityColor() {
     switch (todo.priority) {
-      case 'High':
+      case 1:
         return Colors.red;
-      case 'Medium':
+      case 3:
         return Colors.orange;
       default:
         return Colors.green;
     }
+  }
+
+  String get priorityLabel {
+    switch (todo.priority) {
+      case 1:
+        return 'High';
+      case 3:
+        return 'Low';
+      default:
+        return 'Medium';
+    }
+  }
+
+  String get formattedDueDate {
+    if (todo.dueDate == null) return '-';
+    return DateFormat('dd MMM, yyyy').format(todo.dueDate!);
   }
 
   @override
@@ -66,16 +92,17 @@ class TaskCard extends StatelessWidget {
             Row(
               children: [
                 Chip(
-                  label: Text(todo.priority),
+                  label: Text(priorityLabel),
                   backgroundColor: getPriorityColor().withOpacity(0.15),
                   labelStyle: TextStyle(color: getPriorityColor()),
                 ),
                 const SizedBox(width: 12),
                 const Icon(Icons.calendar_today, size: 16),
                 const SizedBox(width: 4),
-                Text(todo.dueDate),
+                Text(formattedDueDate),
                 const Spacer(),
-                const Icon(Icons.notifications_active, color: Colors.indigo),
+                if (todo.reminderTime != null)
+                  const Icon(Icons.notifications_active, color: Colors.indigo),
               ],
             ),
           ],
