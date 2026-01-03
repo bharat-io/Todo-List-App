@@ -65,4 +65,17 @@ class DbHelper {
 
     return maps.map((e) => Todo.fromMap(e)).toList();
   }
+
+  Future<bool> updateTodo(Todo todo) async {
+    final db = await database;
+
+    int result = await db.update(
+      _tableName,
+      todo.toMap(),
+      where: '$colId = ?',
+      whereArgs: [todo.id],
+    );
+
+    return result > 0;
+  }
 }

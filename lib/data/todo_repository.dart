@@ -17,4 +17,8 @@ class TodoRepository {
   Future<List<Todo>> fetchTodos() async {
     return await dbHelper.fetchTodos();
   }
+
+  Future<bool> updateTodo({required Todo todo}) async {
+    return await dbHelper.updateTodo(todo);
+  }
 }

@@ -32,5 +32,18 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         emit(TodoFailed('Error adding todo'));
       }
     });
+
+    on<UpdateTodoEvent>((event, emit) async {
+      emit(TodoLoading());
+
+      bool isUpdated = await repository.updateTodo(todo: event.todo);
+
+      if (isUpdated) {
+        final todos = await repository.fetchTodos();
+        emit(TodoLoaded(todos));
+      } else {
+        emit(TodoFailed('Todo not updated'));
+      }
+    });
   }
 }

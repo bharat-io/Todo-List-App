@@ -123,25 +123,27 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  final now = DateTime.now();
-
                   final todo = Todo(
-                    id: isEdit ? widget.todo!.id : null,
+                    id: widget.todo?.id,
                     title: titleController.text.trim(),
                     description: descriptionController.text.trim(),
                     priority: _priorityToInt(selectedPriority),
-                    createdAt: isEdit ? widget.todo!.createdAt : DateTime.now(),
+                    createdAt: widget.todo?.createdAt ?? DateTime.now(),
                     reminderTime: reminderEnabled
                         ? DateTime.now().add(const Duration(hours: 1))
                         : null,
                     isCompleted: widget.todo?.isCompleted ?? false,
                   );
 
-                  context.read<TodoBloc>().add(AddTodoEvent(todo: todo));
+                  if (widget.todo == null) {
+                    context.read<TodoBloc>().add(AddTodoEvent(todo: todo));
+                  } else {
+                    context.read<TodoBloc>().add(UpdateTodoEvent(todo: todo));
+                  }
 
                   Navigator.pop(context);
                 },
-                child: Text(isEdit ? 'Update Task' : 'Add Task'),
+                child: Text(widget.todo == null ? 'Add Task' : 'Update Task'),
               ),
             ),
           ],
