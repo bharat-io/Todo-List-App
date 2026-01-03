@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/model/todo.dart';
 
-class AddEditTaskScreen extends StatefulWidget {
-  final Todo? todo; // null = Add, not null = Edit
+class AddEditTodoScreen extends StatefulWidget {
+  final Todo? todo;
 
-  const AddEditTaskScreen({super.key, this.todo});
+  const AddEditTodoScreen({super.key, this.todo});
 
   @override
-  State<AddEditTaskScreen> createState() => _AddEditTaskScreenState();
+  State<AddEditTodoScreen> createState() => _AddEditTodoScreenState();
 }
 
-class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
+class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
 
@@ -101,9 +101,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // save or update logic later
-                },
+                onPressed: () {},
                 child: Text(isEdit ? 'Update Task' : 'Add Task'),
               ),
             ),

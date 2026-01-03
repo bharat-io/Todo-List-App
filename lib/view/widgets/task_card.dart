@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/model/todo.dart';
-import 'package:todo_list_app/view/widgets/add_edit_todo.dart';
+import 'package:todo_list_app/view/screens/add_edit_todo_screen.dart';
 
 class TaskCard extends StatelessWidget {
   final Todo todo;
@@ -48,9 +48,7 @@ class TaskCard extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => AddEditTaskScreen(
-                          todo: todo, // pass current task
-                        ),
+                        builder: (_) => AddEditTodoScreen(todo: todo),
                       ),
                     );
                   },
