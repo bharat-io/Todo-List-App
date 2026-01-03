@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/model/todo.dart';
+import 'package:todo_list_app/view/widgets/add_edit_todo.dart';
 
 class TaskCard extends StatelessWidget {
   final Todo todo;
@@ -41,7 +42,20 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AddEditTaskScreen(
+                          todo: todo, // pass current task
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
                   onPressed: () {},

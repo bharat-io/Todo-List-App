@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/model/todo.dart';
+import 'package:todo_list_app/view/widgets/add_edit_todo.dart';
 import 'package:todo_list_app/view/widgets/task_card.dart';
 
-class TaskListScreen extends StatelessWidget {
-  const TaskListScreen({super.key});
+class TodoHomeScreen extends StatelessWidget {
+  const TodoHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,12 @@ class TaskListScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => AddEditTaskScreen()),
+          );
+        },
         child: const Icon(Icons.add),
       ),
       body: Column(
