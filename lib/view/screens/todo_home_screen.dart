@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/model/todo.dart';
-import 'package:todo_list_app/view/widgets/add_edit_todo.dart';
+import 'package:todo_list_app/view/screens/add_edit_todo_screen.dart';
 import 'package:todo_list_app/view/widgets/task_card.dart';
 
 class TodoHomeScreen extends StatelessWidget {
@@ -29,7 +29,7 @@ class TodoHomeScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => AddEditTaskScreen()),
+            MaterialPageRoute(builder: (_) => AddEditTodoScreen()),
           );
         },
         child: const Icon(Icons.add),
