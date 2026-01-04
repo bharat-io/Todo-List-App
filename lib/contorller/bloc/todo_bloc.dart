@@ -21,6 +21,16 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
     });
 
+    on<SortTodoEvent>((event, emit) async {
+      emit(TodoLoading());
+      try {
+        final todos = await repository.fetchSortedTodos(event.sortType);
+        emit(TodoLoaded(todos));
+      } catch (e) {
+        emit(TodoFailed('Failed to sort todos'));
+      }
+    });
+
     on<AddTodoEvent>((event, emit) async {
       emit(TodoLoading());
       try {

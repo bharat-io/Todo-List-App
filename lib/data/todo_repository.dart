@@ -1,4 +1,5 @@
 import 'package:todo_list_app/data/local/db_helper.dart';
+import 'package:todo_list_app/model/sort/todo_sort.dart';
 import 'package:todo_list_app/model/todo.dart';
 
 class TodoRepository {
@@ -22,5 +23,9 @@ class TodoRepository {
     } catch (e) {
       throw Exception('Failed to update todo');
     }
+  }
+
+  Future<List<Todo>> fetchSortedTodos(TodoSortType sortType) async {
+    return await dbHelper.fetchTodosSorted(sortType);
   }
 }

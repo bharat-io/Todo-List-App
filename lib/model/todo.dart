@@ -4,7 +4,7 @@ class Todo {
   final String description;
   final int priority;
   final DateTime createdAt;
-  final DateTime? dueDate; // 🔹 Full Date + Time
+  final DateTime? dueDate;
   final DateTime? reminderTime;
   final bool isCompleted;
 

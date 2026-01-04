@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:todo_list_app/model/sort/todo_sort.dart';
 import 'package:todo_list_app/model/todo.dart';
 
 class DbHelper {
@@ -74,5 +75,29 @@ class DbHelper {
       whereArgs: [todo.id],
     );
     return result > 0;
+  }
+
+  Future<List<Todo>> fetchTodosSorted(TodoSortType sortType) async {
+    final db = await database;
+
+    String orderBy;
+
+    switch (sortType) {
+      case TodoSortType.priority:
+        orderBy = '$colPriority DESC';
+        break;
+
+      case TodoSortType.dueDate:
+        orderBy = '$colDueDate ASC';
+        break;
+
+      case TodoSortType.createdDate:
+        orderBy = '$colCreatedAt DESC';
+        break;
+    }
+
+    final maps = await db.query(_tableName, orderBy: orderBy);
+
+    return maps.map((e) => Todo.fromMap(e)).toList();
   }
 }

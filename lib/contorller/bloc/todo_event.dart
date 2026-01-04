@@ -1,3 +1,4 @@
+import 'package:todo_list_app/model/sort/todo_sort.dart';
 import 'package:todo_list_app/model/todo.dart';
 
 abstract class TodoEvent {}
@@ -14,4 +15,10 @@ class UpdateTodoEvent extends TodoEvent {
   final Todo todo;
 
   UpdateTodoEvent({required this.todo});
+}
+
+class SortTodoEvent extends TodoEvent {
+  final TodoSortType sortType;
+
+  SortTodoEvent(this.sortType);
 }

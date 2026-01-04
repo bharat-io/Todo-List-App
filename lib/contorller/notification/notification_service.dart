@@ -7,7 +7,6 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
-    // Initialize timezone
     tzData.initializeTimeZones();
 
     const AndroidInitializationSettings androidSettings =
@@ -31,7 +30,6 @@ class NotificationService {
       tz.local,
     );
 
-    // Prevent scheduling in the past
     if (tzScheduledTime.isBefore(tz.TZDateTime.now(tz.local))) return;
 
     await _localNotificationsPlugin.zonedSchedule(
@@ -48,9 +46,8 @@ class NotificationService {
           priority: Priority.high,
         ),
       ),
-      androidScheduleMode:
-          AndroidScheduleMode.exactAllowWhileIdle, // ✅ required
-      matchDateTimeComponents: null, // optional, can be null
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: null,
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list_app/contorller/bloc/todo_bloc.dart';
 import 'package:todo_list_app/contorller/bloc/todo_event.dart';
 import 'package:todo_list_app/contorller/bloc/todo_state.dart';
+import 'package:todo_list_app/model/sort/todo_sort.dart';
 import 'package:todo_list_app/view/screens/add_edit_todo_screen.dart';
 import 'package:todo_list_app/view/widgets/task_card.dart';
 
@@ -15,13 +16,22 @@ class TodoHomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('My Tasks'),
         actions: [
-          PopupMenuButton<String>(
+          PopupMenuButton<TodoSortType>(
             icon: const Icon(Icons.sort),
+            onSelected: (value) {
+              context.read<TodoBloc>().add(SortTodoEvent(value));
+            },
             itemBuilder: (context) => const [
-              PopupMenuItem(value: 'priority', child: Text('Sort by Priority')),
-              PopupMenuItem(value: 'due', child: Text('Sort by Due Date')),
               PopupMenuItem(
-                value: 'created',
+                value: TodoSortType.priority,
+                child: Text('Sort by Priority'),
+              ),
+              PopupMenuItem(
+                value: TodoSortType.dueDate,
+                child: Text('Sort by Due Date'),
+              ),
+              PopupMenuItem(
+                value: TodoSortType.createdDate,
                 child: Text('Sort by Created Date'),
               ),
             ],

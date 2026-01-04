@@ -20,7 +20,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
   late TextEditingController descriptionController;
 
   DateTime? selectedDueDateTime;
-  int reminderMinutes = 30; // default reminder 30 min
+  int reminderMinutes = 30;
   String selectedPriority = 'Medium';
   bool reminderEnabled = false;
 
@@ -131,7 +131,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Description
+
             TextField(
               controller: descriptionController,
               maxLines: 3,
@@ -141,7 +141,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Priority Dropdown
+
             DropdownButtonFormField<String>(
               value: selectedPriority,
               items: const [
@@ -161,7 +161,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Due Date & Time Picker
+
             ListTile(
               title: Text(
                 selectedDueDateTime == null
@@ -171,7 +171,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               trailing: const Icon(Icons.access_time),
               onTap: pickDueDateTime,
             ),
-            // Reminder Switch
+
             if (selectedDueDateTime != null)
               SwitchListTile(
                 title: const Text('Set Reminder'),
@@ -181,7 +181,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                 },
               ),
             const SizedBox(height: 16),
-            // Reminder Minutes Dropdown
+
             if (reminderEnabled && selectedDueDateTime != null)
               DropdownButtonFormField<int>(
                 value: reminderMinutes,
@@ -202,7 +202,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                 ),
               ),
             const SizedBox(height: 24),
-            // Add/Update Button
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -233,12 +233,9 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                         Duration(minutes: 2),
                       );
 
-                      // Ensure reminder time is in the future
                       reminderTime = candidateReminderTime.isAfter(now)
                           ? candidateReminderTime
-                          : now.add(
-                              const Duration(minutes: 1),
-                            ); // fallback 1 min from now
+                          : now.add(const Duration(minutes: 1));
                     }
                   }
 

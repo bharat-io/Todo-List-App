@@ -8,6 +8,7 @@ class TaskCard extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final ValueChanged<bool?>? onToggleComplete;
+
   const TaskCard({
     super.key,
     required this.todo,
@@ -15,6 +16,8 @@ class TaskCard extends StatelessWidget {
     required this.onDelete,
     required this.onToggleComplete,
   });
+
+  // ---------------- PRIORITY ----------------
 
   Color getPriorityColor() {
     switch (todo.priority) {
@@ -38,14 +41,34 @@ class TaskCard extends StatelessWidget {
     }
   }
 
+  // ---------------- DATE FORMATTING ----------------
+
   String get formattedCreatedDate {
     return DateFormat('dd MMM, yyyy').format(todo.createdAt);
   }
 
-  String get formattedDueTime {
+  String get formattedDueDateTime {
     if (todo.dueDate == null) return '';
-    return DateFormat('hh:mm a').format(todo.dueDate!);
+    return DateFormat('dd MMM, hh:mm a').format(todo.dueDate!);
   }
+
+  Color get dueDateColor {
+    if (todo.dueDate == null) return Colors.grey;
+
+    final now = DateTime.now();
+    final due = todo.dueDate!;
+
+    if (due.isBefore(now)) {
+      return Colors.red; // Overdue
+    } else if (due.year == now.year &&
+        due.month == now.month &&
+        due.day == now.day) {
+      return Colors.orange; // Due today
+    }
+    return Colors.grey; // Future
+  }
+
+  // ---------------- UI ----------------
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +80,10 @@ class TaskCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 🔹 TITLE ROW
             Row(
               children: [
-                Checkbox(value: todo.isCompleted, onChanged: (_) {}),
+                Checkbox(value: todo.isCompleted, onChanged: onToggleComplete),
                 Expanded(
                   child: Text(
                     todo.title,
@@ -74,25 +98,36 @@ class TaskCard extends StatelessWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AddEditTodoScreen(todo: todo),
-                      ),
-                    );
-                  },
+                  onPressed:
+                      onEdit ??
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AddEditTodoScreen(todo: todo),
+                          ),
+                        );
+                      },
                 ),
-
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  onPressed: () {},
+                  onPressed: onDelete,
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(todo.description, style: const TextStyle(color: Colors.grey)),
+
+            // 🔹 DESCRIPTION
+            if (todo.description.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                todo.description,
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ],
+
             const SizedBox(height: 12),
+
+            // 🔹 META ROW (Priority + Created + Reminder)
             Row(
               children: [
                 Chip(
@@ -100,22 +135,48 @@ class TaskCard extends StatelessWidget {
                   backgroundColor: getPriorityColor().withOpacity(0.15),
                   labelStyle: TextStyle(color: getPriorityColor()),
                 ),
+
                 const SizedBox(width: 12),
-                const Icon(Icons.calendar_today, size: 16),
+
+                const Icon(Icons.calendar_today, size: 14),
                 const SizedBox(width: 4),
-                Text(formattedCreatedDate),
-                const SizedBox(width: 12),
-                if (todo.dueDate != null) ...[
-                  const Icon(Icons.schedule, size: 16),
-                  const SizedBox(width: 4),
-                  Text(formattedDueTime),
-                ],
+                Text(
+                  formattedCreatedDate,
+                  style: const TextStyle(fontSize: 12),
+                ),
 
                 const Spacer(),
+
                 if (todo.reminderTime != null)
-                  const Icon(Icons.notifications_active, color: Colors.indigo),
+                  const Icon(
+                    Icons.notifications_active,
+                    color: Colors.indigo,
+                    size: 18,
+                  ),
               ],
             ),
+
+            // 🔥 DUE DATE ROW (NEW LINE – FIXES OVERFLOW)
+            if (todo.dueDate != null) ...[
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Icon(Icons.schedule, size: 16, color: dueDateColor),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Due: $formattedDueDateTime',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: dueDateColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
