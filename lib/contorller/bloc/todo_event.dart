@@ -28,3 +28,9 @@ class DeleteTodoEvent extends TodoEvent {
 
   DeleteTodoEvent({required this.todo});
 }
+
+class SearchTodoEvent extends TodoEvent {
+  final String query;
+
+  SearchTodoEvent(this.query);
+}

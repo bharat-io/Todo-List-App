@@ -60,8 +60,12 @@ class TodoHomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+              onChanged: (value) {
+                context.read<TodoBloc>().add(SearchTodoEvent(value));
+              },
             ),
           ),
+
           Expanded(
             child: BlocBuilder<TodoBloc, TodoState>(
               builder: (context, state) {

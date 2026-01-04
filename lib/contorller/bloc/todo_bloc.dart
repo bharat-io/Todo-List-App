@@ -21,6 +21,22 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
     });
 
+    on<SearchTodoEvent>((event, emit) async {
+      emit(TodoLoading());
+      try {
+        final allTodos = await repository.fetchTodos();
+        final filtered = allTodos
+            .where(
+              (todo) =>
+                  todo.title.toLowerCase().contains(event.query.toLowerCase()),
+            )
+            .toList();
+        emit(TodoLoaded(filtered));
+      } catch (e) {
+        emit(TodoFailed('Error searching todos'));
+      }
+    });
+
     on<SortTodoEvent>((event, emit) async {
       emit(TodoLoading());
       try {
