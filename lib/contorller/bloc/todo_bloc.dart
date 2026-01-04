@@ -81,15 +81,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       emit(TodoLoaded(await repository.fetchTodos()));
     });
     on<UpdateTodoEvent>((event, emit) async {
-      // emit(TodoLoading());
-
       await repository.updateTodo(todo: event.todo);
 
-      // Cancel old notifications
       await notificationService.cancelNotification(event.todo.id!);
       await notificationService.cancelNotification(event.todo.id! + 1000);
 
-      // Reschedule
       if (event.todo.dueDate != null) {
         await notificationService.scheduleNotification(
           id: event.todo.id!,

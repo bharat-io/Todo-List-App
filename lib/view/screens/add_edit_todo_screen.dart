@@ -39,16 +39,27 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
       text: widget.todo?.description ?? '',
     );
 
-    if (widget.todo?.dueDate != null) {
-      selectedDueDateTime = widget.todo!.dueDate;
-    }
+    // ----- Initialize Priority safely -----
+    int numericPriority = widget.todo?.priority ?? 2; // default Medium
+    if (![1, 2, 3].contains(numericPriority)) numericPriority = 2;
+    selectedPriority = _priorityToString(numericPriority);
 
+    // ----- Initialize Due Date -----
+    selectedDueDateTime = widget.todo?.dueDate;
+
+    // ----- Initialize Reminder safely -----
     reminderEnabled = widget.todo?.reminderTime != null;
-
-    if (widget.todo?.reminderTime != null && selectedDueDateTime != null) {
-      reminderMinutes = selectedDueDateTime!
-          .difference(widget.todo!.reminderTime!)
-          .inMinutes;
+    if (widget.todo?.reminderTime != null) {
+      final due = widget.todo!.dueDate;
+      final reminder = widget.todo!.reminderTime!;
+      if (due != null) {
+        final diff = due.difference(reminder).inMinutes;
+        reminderMinutes = reminderOptions.any((e) => e.values.first == diff)
+            ? diff
+            : 30; // fallback if saved reminder is not in options
+      } else {
+        reminderMinutes = 30;
+      }
     }
   }
 
@@ -121,6 +132,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // ----- Title -----
             TextField(
               controller: titleController,
               decoration: const InputDecoration(
@@ -130,6 +142,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
             ),
             const SizedBox(height: 16),
 
+            // ----- Description -----
             TextField(
               controller: descriptionController,
               maxLines: 3,
@@ -140,6 +153,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
             ),
             const SizedBox(height: 16),
 
+            // ----- Priority Dropdown -----
             DropdownButtonFormField<String>(
               value: selectedPriority,
               items: const [
@@ -150,9 +164,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                 ),
                 DropdownMenuItem(value: 'Low', child: Text('Low Priority')),
               ],
-              onChanged: (value) {
-                setState(() => selectedPriority = value!);
-              },
+              onChanged: (value) => setState(() => selectedPriority = value!),
               decoration: const InputDecoration(
                 labelText: 'Priority',
                 border: OutlineInputBorder(),
@@ -160,6 +172,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
             ),
             const SizedBox(height: 16),
 
+            // ----- Due Date -----
             ListTile(
               title: Text(
                 selectedDueDateTime == null
@@ -170,16 +183,16 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               onTap: pickDueDateTime,
             ),
 
+            // ----- Reminder Toggle -----
             if (selectedDueDateTime != null)
               SwitchListTile(
                 title: const Text('Set Reminder'),
                 value: reminderEnabled,
-                onChanged: (value) {
-                  setState(() => reminderEnabled = value);
-                },
+                onChanged: (value) => setState(() => reminderEnabled = value),
               ),
             const SizedBox(height: 16),
 
+            // ----- Reminder Dropdown -----
             if (reminderEnabled && selectedDueDateTime != null)
               DropdownButtonFormField<int>(
                 value: reminderMinutes,
@@ -191,9 +204,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                       ),
                     )
                     .toList(),
-                onChanged: (value) {
-                  setState(() => reminderMinutes = value!);
-                },
+                onChanged: (value) => setState(() => reminderMinutes = value!),
                 decoration: const InputDecoration(
                   labelText: 'Reminder Time',
                   border: OutlineInputBorder(),
@@ -201,6 +212,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               ),
             const SizedBox(height: 24),
 
+            // ----- Save Button -----
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -212,42 +224,17 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                     return;
                   }
 
-                  DateTime? dueTime;
+                  DateTime? dueTime = selectedDueDateTime;
                   DateTime? reminderTime;
-                  final now = DateTime.now();
-
-                  if (selectedDueDateTime != null) {
-                    dueTime = selectedDueDateTime;
-                  }
 
                   if (selectedDueDateTime != null && reminderEnabled) {
                     final candidate = selectedDueDateTime!.subtract(
                       Duration(minutes: reminderMinutes),
                     );
-
-                    reminderTime = candidate.isAfter(now)
+                    reminderTime = candidate.isAfter(DateTime.now())
                         ? candidate
-                        : now.add(const Duration(minutes: 1));
+                        : DateTime.now().add(const Duration(minutes: 1));
                   }
-                  debugPrint(
-                    '================ REMINDER DEBUG ================',
-                  );
-                  debugPrint('NOW            : ${DateTime.now()}');
-                  debugPrint('DUE DATE       : $dueTime');
-                  debugPrint('REMINDER TIME  : $reminderTime');
-                  debugPrint('MINUTES BEFORE : $reminderMinutes');
-
-                  if (reminderTime != null) {
-                    final diff = reminderTime!
-                        .difference(DateTime.now())
-                        .inSeconds;
-                    debugPrint('SECONDS FROM NOW (REMINDER) : $diff');
-                  }
-
-                  debugPrint('REMINDER ENABLED: $reminderEnabled');
-                  debugPrint(
-                    '================================================',
-                  );
 
                   final todo = Todo(
                     id: widget.todo?.id,
@@ -255,20 +242,19 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                     description: descriptionController.text.trim(),
                     priority: _priorityToInt(selectedPriority),
                     createdAt: widget.todo?.createdAt ?? DateTime.now(),
-                    dueDate: selectedDueDateTime,
+                    dueDate: dueTime,
                     reminderTime: reminderTime,
                     isCompleted: widget.todo?.isCompleted ?? false,
                   );
 
-                  if (widget.todo == null) {
-                    context.read<TodoBloc>().add(AddTodoEvent(todo: todo));
-                  } else {
+                  if (isEdit) {
                     context.read<TodoBloc>().add(UpdateTodoEvent(todo: todo));
+                  } else {
+                    context.read<TodoBloc>().add(AddTodoEvent(todo: todo));
                   }
 
                   Navigator.pop(context);
                 },
-
                 child: Text(isEdit ? 'Update Task' : 'Add Task'),
               ),
             ),
