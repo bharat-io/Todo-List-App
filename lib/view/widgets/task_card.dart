@@ -38,9 +38,13 @@ class TaskCard extends StatelessWidget {
     }
   }
 
-  String get formattedDueDate {
-    if (todo.dueDate == null) return '-';
-    return DateFormat('dd MMM, yyyy').format(todo.dueDate!);
+  String get formattedCreatedDate {
+    return DateFormat('dd MMM, yyyy').format(todo.createdAt);
+  }
+
+  String get formattedDueTime {
+    if (todo.dueDate == null) return '';
+    return DateFormat('hh:mm a').format(todo.dueDate!);
   }
 
   @override
@@ -99,7 +103,14 @@ class TaskCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 const Icon(Icons.calendar_today, size: 16),
                 const SizedBox(width: 4),
-                Text(formattedDueDate),
+                Text(formattedCreatedDate),
+                const SizedBox(width: 12),
+                if (todo.dueDate != null) ...[
+                  const Icon(Icons.schedule, size: 16),
+                  const SizedBox(width: 4),
+                  Text(formattedDueTime),
+                ],
+
                 const Spacer(),
                 if (todo.reminderTime != null)
                   const Icon(Icons.notifications_active, color: Colors.indigo),

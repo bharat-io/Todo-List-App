@@ -53,10 +53,9 @@ class DbHelper {
 
   // ---------------- CRUD ----------------
 
-  Future<bool> addTodo(Todo todo) async {
+  Future<int> addTodo(Todo todo) async {
     final db = await database;
-    int result = await db.insert(_tableName, todo.toMap());
-    return result > 0;
+    return await db.insert('todos', todo.toMap());
   }
 
   Future<List<Todo>> fetchTodos() async {
@@ -68,14 +67,12 @@ class DbHelper {
 
   Future<bool> updateTodo(Todo todo) async {
     final db = await database;
-
-    int result = await db.update(
+    final result = await db.update(
       _tableName,
       todo.toMap(),
-      where: '$colId = ?',
+      where: 'id = ?',
       whereArgs: [todo.id],
     );
-
     return result > 0;
   }
 }

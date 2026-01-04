@@ -6,12 +6,10 @@ class TodoRepository {
 
   TodoRepository({required this.dbHelper});
 
-  Future<bool> addTodo({required Todo todo}) async {
-    try {
-      return await dbHelper.addTodo(todo);
-    } catch (e) {
-      return false;
-    }
+  Future<int> addTodo({required Todo todo}) async {
+    final db = await dbHelper.database;
+    final id = await db.insert('todos', todo.toMap());
+    return id;
   }
 
   Future<List<Todo>> fetchTodos() async {
@@ -19,6 +17,10 @@ class TodoRepository {
   }
 
   Future<bool> updateTodo({required Todo todo}) async {
-    return await dbHelper.updateTodo(todo);
+    try {
+      return await dbHelper.updateTodo(todo);
+    } catch (e) {
+      throw Exception('Failed to update todo');
+    }
   }
 }

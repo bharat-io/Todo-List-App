@@ -1,13 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list_app/contorller/bloc/todo_event.dart';
 import 'package:todo_list_app/contorller/bloc/todo_state.dart';
+import 'package:todo_list_app/contorller/notification/notification_service.dart';
 import 'package:todo_list_app/data/todo_repository.dart';
 import 'package:todo_list_app/model/todo.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
   final TodoRepository repository;
+  final NotificationService notificationService;
 
-  TodoBloc({required this.repository}) : super(TodoInitial()) {
+  TodoBloc({required this.repository, required this.notificationService})
+    : super(TodoInitial()) {
     on<FetechTodoEvent>((event, emit) async {
       emit(TodoLoading());
       try {
@@ -21,15 +24,23 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<AddTodoEvent>((event, emit) async {
       emit(TodoLoading());
       try {
-        bool isAdded = await repository.addTodo(todo: event.todo);
-        if (isAdded) {
-          List<Todo> todos = await repository.fetchTodos();
-          emit(TodoLoaded(todos));
-        } else {
-          emit(TodoFailed('Todo not added!'));
+        final int insertedId = await repository.addTodo(todo: event.todo);
+
+        // Schedule notification using the proper ID
+        if (event.todo.reminderTime != null) {
+          await notificationService.scheduleNotification(
+            id: insertedId,
+            title: 'Task Reminder',
+            body: event.todo.title,
+            scheduledTime: event.todo.reminderTime!,
+          );
         }
+
+        final todos = await repository.fetchTodos();
+        emit(TodoLoaded(todos));
       } catch (e) {
-        emit(TodoFailed('Error adding todo'));
+        emit(TodoFailed('Error adding todo: $e'));
+        print("Error: $e");
       }
     });
 
@@ -39,6 +50,16 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       bool isUpdated = await repository.updateTodo(todo: event.todo);
 
       if (isUpdated) {
+        if (event.todo.reminderTime != null) {
+          await notificationService.scheduleNotification(
+            id: event.todo.id!,
+            title: 'Task Reminder',
+            body: event.todo.title,
+            scheduledTime: event.todo.reminderTime!,
+          );
+        } else {
+          await notificationService.cancelNotification(event.todo.id!);
+        }
         final todos = await repository.fetchTodos();
         emit(TodoLoaded(todos));
       } else {
