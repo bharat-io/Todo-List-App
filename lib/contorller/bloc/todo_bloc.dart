@@ -105,7 +105,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         );
       }
 
-      emit(TodoLoaded(await repository.fetchTodos()));
+      final todos = await repository.fetchTodos();
+      emit(TodoLoaded(todos.reversed.toList()));
     });
   }
 }
