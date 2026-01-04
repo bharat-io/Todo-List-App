@@ -245,7 +245,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                     description: descriptionController.text.trim(),
                     priority: _priorityToInt(selectedPriority),
                     createdAt: widget.todo?.createdAt ?? DateTime.now(),
-                    dueDate: dueTime,
+                    dueDate: selectedDueDateTime,
                     reminderTime: reminderTime,
                     isCompleted: widget.todo?.isCompleted ?? false,
                   );
