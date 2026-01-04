@@ -47,4 +47,17 @@ class Todo {
       isCompleted: map['is_completed'] == 1,
     );
   }
+
+  Todo copyWith({bool? isCompleted}) {
+    return Todo(
+      id: id,
+      title: title,
+      description: description,
+      priority: priority,
+      createdAt: createdAt,
+      dueDate: dueDate,
+      reminderTime: reminderTime,
+      isCompleted: isCompleted ?? this.isCompleted,
+    );
+  }
 }

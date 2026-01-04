@@ -136,7 +136,16 @@ class _TodoHomeScreenState extends State<TodoHomeScreen> {
                             ),
                           );
                         },
-                        onToggleComplete: (value) {},
+                        onToggleComplete: (value) {
+                          final updatedTodo = todo.copyWith(
+                            isCompleted: value ?? false,
+                          );
+
+                          context.read<TodoBloc>().add(
+                            UpdateTodoEvent(todo: updatedTodo),
+                          );
+                        },
+
                         todo: todo,
                         onEdit: () async {
                           await Navigator.push(
