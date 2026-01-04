@@ -141,8 +141,8 @@ class TaskCard extends StatelessWidget {
                 if (todo.reminderTime != null)
                   const Icon(
                     Icons.notifications_active,
-                    color: Colors.indigo,
-                    size: 18,
+                    color: Colors.white,
+                    size: 25,
                   ),
               ],
             ),

@@ -19,25 +19,6 @@ class _TodoHomeScreenState extends State<TodoHomeScreen> {
   final NotificationService notificationService = NotificationService();
 
   @override
-  void initState() {
-    super.initState();
-    testNotification();
-  }
-
-  void testNotification() async {
-    final service = NotificationService();
-
-    await service.scheduleNotification(
-      id: 1,
-      title: 'Test Task',
-      body: 'This is your reminder!',
-      scheduledTime: DateTime.now().add(const Duration(seconds: 10)),
-    );
-
-    print("Notification scheduled for 10 seconds from now");
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -83,8 +64,15 @@ class _TodoHomeScreenState extends State<TodoHomeScreen> {
               decoration: InputDecoration(
                 hintText: 'Search tasks...',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
+
+                enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.white, width: 1.2),
+                ),
+
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.white, width: 1.8),
                 ),
               ),
               onChanged: (value) {

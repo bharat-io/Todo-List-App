@@ -39,15 +39,12 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
       text: widget.todo?.description ?? '',
     );
 
-    // ----- Initialize Priority safely -----
-    int numericPriority = widget.todo?.priority ?? 2; // default Medium
+    int numericPriority = widget.todo?.priority ?? 2;
     if (![1, 2, 3].contains(numericPriority)) numericPriority = 2;
     selectedPriority = _priorityToString(numericPriority);
 
-    // ----- Initialize Due Date -----
     selectedDueDateTime = widget.todo?.dueDate;
 
-    // ----- Initialize Reminder safely -----
     reminderEnabled = widget.todo?.reminderTime != null;
     if (widget.todo?.reminderTime != null) {
       final due = widget.todo!.dueDate;
@@ -56,7 +53,7 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
         final diff = due.difference(reminder).inMinutes;
         reminderMinutes = reminderOptions.any((e) => e.values.first == diff)
             ? diff
-            : 30; // fallback if saved reminder is not in options
+            : 30;
       } else {
         reminderMinutes = 30;
       }
@@ -132,7 +129,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // ----- Title -----
             TextField(
               controller: titleController,
               decoration: const InputDecoration(
@@ -142,7 +138,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
             ),
             const SizedBox(height: 16),
 
-            // ----- Description -----
             TextField(
               controller: descriptionController,
               maxLines: 3,
@@ -153,7 +148,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
             ),
             const SizedBox(height: 16),
 
-            // ----- Priority Dropdown -----
             DropdownButtonFormField<String>(
               value: selectedPriority,
               items: const [
@@ -172,7 +166,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
             ),
             const SizedBox(height: 16),
 
-            // ----- Due Date -----
             ListTile(
               title: Text(
                 selectedDueDateTime == null
@@ -183,7 +176,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               onTap: pickDueDateTime,
             ),
 
-            // ----- Reminder Toggle -----
             if (selectedDueDateTime != null)
               SwitchListTile(
                 title: const Text('Set Reminder'),
@@ -192,7 +184,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               ),
             const SizedBox(height: 16),
 
-            // ----- Reminder Dropdown -----
             if (reminderEnabled && selectedDueDateTime != null)
               DropdownButtonFormField<int>(
                 value: reminderMinutes,
@@ -212,7 +203,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               ),
             const SizedBox(height: 24),
 
-            // ----- Save Button -----
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

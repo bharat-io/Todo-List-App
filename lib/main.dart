@@ -6,30 +6,25 @@ import 'package:todo_list_app/contorller/bloc/todo_event.dart';
 import 'package:todo_list_app/contorller/notification/notification_service.dart';
 import 'package:todo_list_app/data/local/db_helper.dart';
 import 'package:todo_list_app/data/todo_repository.dart';
+import 'package:todo_list_app/utill/app_color.dart';
 import 'package:todo_list_app/view/screens/todo_home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Awesome Notifications
-  await AwesomeNotifications().initialize(
-    null, // icon for notifications (null = default app icon)
-    [
-      NotificationChannel(
-        channelKey: 'todo_channel',
-        channelName: 'Todo Notifications',
-        channelDescription: 'Notification channel for Todo reminders',
-        defaultColor: Colors.indigo,
-        importance: NotificationImportance.High,
-        channelShowBadge: true,
-      ),
-    ],
-  );
+  await AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'todo_channel',
+      channelName: 'Todo Notifications',
+      channelDescription: 'Notification channel for Todo reminders',
+      defaultColor: Colors.indigo,
+      importance: NotificationImportance.High,
+      channelShowBadge: true,
+    ),
+  ]);
 
-  // Request permission on first launch
   bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
   if (!isAllowed) {
-    // Show a simple dialog asking permission
     AwesomeNotifications().requestPermissionToSendNotifications();
   }
 
@@ -54,9 +49,42 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-        home: TodoHomeScreen(),
+        title: 'Todo App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
+
+          scaffoldBackgroundColor: backgroundColor,
+
+          colorScheme: ColorScheme(
+            brightness: Brightness.light,
+            primary: backgroundColor,
+            onPrimary: Colors.white,
+            secondary: accentColor,
+            onSecondary: Colors.white,
+            error: Colors.red,
+            onError: Colors.white,
+            background: backgroundColor,
+            onBackground: Colors.white,
+            surface: cardColor,
+            onSurface: Colors.white,
+          ),
+
+          appBarTheme: const AppBarTheme(
+            backgroundColor: backgroundColor,
+            foregroundColor: Colors.white,
+            elevation: 0,
+          ),
+
+          cardTheme: const CardThemeData(color: cardColor, elevation: 4),
+
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            backgroundColor: accentColor,
+            foregroundColor: Colors.white,
+          ),
+        ),
+
+        home: const TodoHomeScreen(),
       ),
     );
   }
