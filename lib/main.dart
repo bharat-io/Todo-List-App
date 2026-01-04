@@ -51,38 +51,6 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Todo App',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-
-          scaffoldBackgroundColor: backgroundColor,
-
-          colorScheme: ColorScheme(
-            brightness: Brightness.light,
-            primary: backgroundColor,
-            onPrimary: Colors.white,
-            secondary: accentColor,
-            onSecondary: Colors.white,
-            error: Colors.red,
-            onError: Colors.white,
-            background: backgroundColor,
-            onBackground: Colors.white,
-            surface: cardColor,
-            onSurface: Colors.white,
-          ),
-
-          appBarTheme: const AppBarTheme(
-            backgroundColor: backgroundColor,
-            foregroundColor: Colors.white,
-            elevation: 0,
-          ),
-
-          cardTheme: const CardThemeData(color: cardColor, elevation: 4),
-
-          floatingActionButtonTheme: const FloatingActionButtonThemeData(
-            backgroundColor: accentColor,
-            foregroundColor: Colors.white,
-          ),
-        ),
 
         home: const TodoHomeScreen(),
       ),

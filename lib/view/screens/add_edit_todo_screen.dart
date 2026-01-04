@@ -131,15 +131,21 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
           children: [
             TextField(
               controller: titleController,
-              decoration: commonDecoration('Title'),
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(),
+              ),
             ),
-
             const SizedBox(height: 16),
+
             TextField(
               controller: descriptionController,
-              decoration: commonDecoration('Description'),
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                border: OutlineInputBorder(),
+              ),
             ),
-
             const SizedBox(height: 16),
 
             DropdownButtonFormField<String>(
@@ -155,21 +161,9 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
               onChanged: (value) => setState(() => selectedPriority = value!),
               decoration: const InputDecoration(
                 labelText: 'Priority',
-                labelStyle: TextStyle(color: Colors.white),
-
-                filled: true,
-                fillColor: Colors.transparent,
-
                 border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 2),
-                ),
               ),
             ),
-
             const SizedBox(height: 16),
 
             ListTile(
@@ -187,8 +181,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                 title: const Text('Set Reminder'),
                 value: reminderEnabled,
                 onChanged: (value) => setState(() => reminderEnabled = value),
-                activeColor: Colors.white,
-                inactiveThumbColor: Colors.white,
               ),
             const SizedBox(height: 16),
 
@@ -206,16 +198,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                 onChanged: (value) => setState(() => reminderMinutes = value!),
                 decoration: const InputDecoration(
                   labelText: 'Reminder Time',
-                  labelStyle: TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.transparent,
-
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 2),
-                  ),
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -224,17 +206,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
                 onPressed: () {
                   if (titleController.text.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -279,20 +250,6 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  InputDecoration commonDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: TextStyle(color: Colors.white),
-      border: const OutlineInputBorder(),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white, width: 1),
-      ),
-      focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey, width: 2),
       ),
     );
   }

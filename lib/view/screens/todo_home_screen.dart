@@ -67,12 +67,10 @@ class _TodoHomeScreenState extends State<TodoHomeScreen> {
 
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.white, width: 1.2),
                 ),
 
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.white, width: 1.8),
                 ),
               ),
               onChanged: (value) {
