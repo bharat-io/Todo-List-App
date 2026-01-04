@@ -6,12 +6,12 @@ import 'package:todo_list_app/contorller/notification/notification_service.dart'
 import 'package:todo_list_app/data/local/db_helper.dart';
 import 'package:todo_list_app/data/todo_repository.dart';
 import 'package:todo_list_app/view/screens/todo_home_screen.dart';
-import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  tz.initializeTimeZones();
+  final notificationService = NotificationService();
+  await notificationService.init();
 
   runApp(const MyApp());
 }

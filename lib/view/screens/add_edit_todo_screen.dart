@@ -219,25 +219,37 @@ class _AddEditTodoScreenState extends State<AddEditTodoScreen> {
                   final now = DateTime.now();
 
                   if (selectedDueDateTime != null) {
-                    dueTime = DateTime(
-                      now.year,
-                      now.month,
-                      now.day,
-                      selectedDueDateTime!.hour,
-                      selectedDueDateTime!.minute,
+                    dueTime = selectedDueDateTime;
+                  }
+
+                  if (selectedDueDateTime != null && reminderEnabled) {
+                    final candidate = selectedDueDateTime!.subtract(
+                      Duration(minutes: reminderMinutes),
                     );
 
-                    if (reminderEnabled) {
-                      final int offset = reminderMinutes ?? 30;
-                      final candidateReminderTime = dueTime.subtract(
-                        Duration(minutes: 2),
-                      );
-
-                      reminderTime = candidateReminderTime.isAfter(now)
-                          ? candidateReminderTime
-                          : now.add(const Duration(minutes: 1));
-                    }
+                    reminderTime = candidate.isAfter(now)
+                        ? candidate
+                        : now.add(const Duration(minutes: 1));
                   }
+                  debugPrint(
+                    '================ REMINDER DEBUG ================',
+                  );
+                  debugPrint('NOW            : ${DateTime.now()}');
+                  debugPrint('DUE DATE       : $dueTime');
+                  debugPrint('REMINDER TIME  : $reminderTime');
+                  debugPrint('MINUTES BEFORE : $reminderMinutes');
+
+                  if (reminderTime != null) {
+                    final diff = reminderTime!
+                        .difference(DateTime.now())
+                        .inSeconds;
+                    debugPrint('SECONDS FROM NOW (REMINDER) : $diff');
+                  }
+
+                  debugPrint('REMINDER ENABLED: $reminderEnabled');
+                  debugPrint(
+                    '================================================',
+                  );
 
                   final todo = Todo(
                     id: widget.todo?.id,
