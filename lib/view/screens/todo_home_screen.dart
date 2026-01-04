@@ -3,12 +3,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list_app/contorller/bloc/todo_bloc.dart';
 import 'package:todo_list_app/contorller/bloc/todo_event.dart';
 import 'package:todo_list_app/contorller/bloc/todo_state.dart';
+import 'package:todo_list_app/contorller/notification/notification_service.dart';
 import 'package:todo_list_app/model/sort/todo_sort.dart';
 import 'package:todo_list_app/view/screens/add_edit_todo_screen.dart';
 import 'package:todo_list_app/view/widgets/task_card.dart';
 
-class TodoHomeScreen extends StatelessWidget {
+class TodoHomeScreen extends StatefulWidget {
   const TodoHomeScreen({super.key});
+
+  @override
+  State<TodoHomeScreen> createState() => _TodoHomeScreenState();
+}
+
+class _TodoHomeScreenState extends State<TodoHomeScreen> {
+  final NotificationService notificationService = NotificationService();
+
+  @override
+  void initState() {
+    super.initState();
+    testNotification();
+  }
+
+  void testNotification() async {
+    final service = NotificationService();
+
+    await service.scheduleNotification(
+      id: 1,
+      title: 'Test Task',
+      body: 'This is your reminder!',
+      scheduledTime: DateTime.now().add(const Duration(seconds: 10)),
+    );
+
+    print("Notification scheduled for 10 seconds from now");
+  }
 
   @override
   Widget build(BuildContext context) {

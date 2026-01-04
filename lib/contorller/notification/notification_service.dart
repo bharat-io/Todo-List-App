@@ -1,22 +1,25 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tzData;
+import 'dart:ui';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
   Future<void> init() async {
-    tzData.initializeTimeZones();
-
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const InitializationSettings settings = InitializationSettings(
-      android: androidSettings,
+    // Initialize the plugin
+    await AwesomeNotifications().initialize(
+      null, // Use default icon
+      [
+        NotificationChannel(
+          channelKey: 'todo_channel', // Must match your notification calls
+          channelName: 'Todo Notifications',
+          channelDescription: 'Reminders for your todos',
+          defaultColor: const Color(0xFF9D50DD),
+          importance: NotificationImportance.Max,
+          channelShowBadge: true,
+          playSound: true,
+        ),
+      ],
+      debug: true,
     );
-
-    await _localNotificationsPlugin.initialize(settings);
   }
 
   Future<void> scheduleNotification({
@@ -25,33 +28,19 @@ class NotificationService {
     required String body,
     required DateTime scheduledTime,
   }) async {
-    final tz.TZDateTime tzScheduledTime = tz.TZDateTime.from(
-      scheduledTime,
-      tz.local,
-    );
-
-    if (tzScheduledTime.isBefore(tz.TZDateTime.now(tz.local))) return;
-
-    await _localNotificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      tzScheduledTime,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'todo_channel',
-          'Todo Notifications',
-          channelDescription: 'Reminders for your todos',
-          importance: Importance.max,
-          priority: Priority.high,
-        ),
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'todo_channel', // Must match the channel key created above
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Default,
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: null,
+      schedule: NotificationCalendar.fromDate(date: scheduledTime),
     );
   }
 
   Future<void> cancelNotification(int id) async {
-    await _localNotificationsPlugin.cancel(id);
+    await AwesomeNotifications().cancel(id);
   }
 }
