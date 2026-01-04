@@ -22,3 +22,9 @@ class SortTodoEvent extends TodoEvent {
 
   SortTodoEvent(this.sortType);
 }
+
+class DeleteTodoEvent extends TodoEvent {
+  final Todo todo;
+
+  DeleteTodoEvent({required this.todo});
+}

@@ -31,12 +31,26 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
     });
 
+    on<DeleteTodoEvent>((event, emit) async {
+      emit(TodoLoading());
+      try {
+        final isDeleted = await repository.deleteTodo(id: event.todo.id!);
+        if (isDeleted) {
+          final todos = await repository.fetchTodos();
+          emit(TodoLoaded(todos));
+        } else {
+          emit(TodoFailed('Todo not deleted'));
+        }
+      } catch (e) {
+        emit(TodoFailed('Error deleting todo'));
+      }
+    });
+
     on<AddTodoEvent>((event, emit) async {
       emit(TodoLoading());
       try {
         final int insertedId = await repository.addTodo(todo: event.todo);
 
-        // Schedule notification using the proper ID
         if (event.todo.reminderTime != null) {
           await notificationService.scheduleNotification(
             id: insertedId,

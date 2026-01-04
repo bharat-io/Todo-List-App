@@ -17,8 +17,6 @@ class TaskCard extends StatelessWidget {
     required this.onToggleComplete,
   });
 
-  // ---------------- PRIORITY ----------------
-
   Color getPriorityColor() {
     switch (todo.priority) {
       case 1:
@@ -41,8 +39,6 @@ class TaskCard extends StatelessWidget {
     }
   }
 
-  // ---------------- DATE FORMATTING ----------------
-
   String get formattedCreatedDate {
     return DateFormat('dd MMM, yyyy').format(todo.createdAt);
   }
@@ -59,16 +55,14 @@ class TaskCard extends StatelessWidget {
     final due = todo.dueDate!;
 
     if (due.isBefore(now)) {
-      return Colors.red; // Overdue
+      return Colors.red;
     } else if (due.year == now.year &&
         due.month == now.month &&
         due.day == now.day) {
-      return Colors.orange; // Due today
+      return Colors.orange;
     }
-    return Colors.grey; // Future
+    return Colors.grey;
   }
-
-  // ---------------- UI ----------------
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +74,6 @@ class TaskCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 TITLE ROW
             Row(
               children: [
                 Checkbox(value: todo.isCompleted, onChanged: onToggleComplete),
@@ -116,7 +109,6 @@ class TaskCard extends StatelessWidget {
               ],
             ),
 
-            // 🔹 DESCRIPTION
             if (todo.description.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
@@ -127,7 +119,6 @@ class TaskCard extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // 🔹 META ROW (Priority + Created + Reminder)
             Row(
               children: [
                 Chip(
@@ -156,7 +147,6 @@ class TaskCard extends StatelessWidget {
               ],
             ),
 
-            // 🔥 DUE DATE ROW (NEW LINE – FIXES OVERFLOW)
             if (todo.dueDate != null) ...[
               const SizedBox(height: 6),
               Row(

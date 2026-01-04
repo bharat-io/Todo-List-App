@@ -28,4 +28,10 @@ class TodoRepository {
   Future<List<Todo>> fetchSortedTodos(TodoSortType sortType) async {
     return await dbHelper.fetchTodosSorted(sortType);
   }
+
+  Future<bool> deleteTodo({required int id}) async {
+    final db = await dbHelper.database;
+    final result = await db.delete('todos', where: 'id = ?', whereArgs: [id]);
+    return result > 0;
+  }
 }

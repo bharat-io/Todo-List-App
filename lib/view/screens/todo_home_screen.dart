@@ -79,7 +79,32 @@ class TodoHomeScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final todo = state.todos[index];
                       return TaskCard(
-                        onDelete: () {},
+                        onDelete: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: const Text('Delete Task'),
+                              content: const Text(
+                                'Are you sure you want to delete this task?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    context.read<TodoBloc>().add(
+                                      DeleteTodoEvent(todo: todo),
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                         onToggleComplete: (value) {},
                         todo: todo,
                         onEdit: () async {
