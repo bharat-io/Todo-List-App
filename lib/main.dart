@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list_app/contorller/bloc/todo_bloc.dart';
@@ -10,8 +11,27 @@ import 'package:todo_list_app/view/screens/todo_home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final notificationService = NotificationService();
-  await notificationService.init();
+  // Initialize Awesome Notifications
+  await AwesomeNotifications().initialize(
+    null, // icon for notifications (null = default app icon)
+    [
+      NotificationChannel(
+        channelKey: 'todo_channel',
+        channelName: 'Todo Notifications',
+        channelDescription: 'Notification channel for Todo reminders',
+        defaultColor: Colors.indigo,
+        importance: NotificationImportance.High,
+        channelShowBadge: true,
+      ),
+    ],
+  );
+
+  // Request permission on first launch
+  bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+  if (!isAllowed) {
+    // Show a simple dialog asking permission
+    AwesomeNotifications().requestPermissionToSendNotifications();
+  }
 
   runApp(const MyApp());
 }
